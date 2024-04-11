@@ -8,9 +8,7 @@ object PageRank {
      */
     def equal(pages: Map[String, WebPage]): Map[String, Double] = {
         // TODO: remove this stub and implement this method
-        val keys = pages.keys.toList
-        val ones = for i <- keys yield 1.0
-        keys.zip(ones).toMap
+        pages.keys.toList.map(_ -> 1.0).toMap
     }
 
     /**
