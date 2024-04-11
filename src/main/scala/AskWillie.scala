@@ -19,7 +19,7 @@ import scala.util.Sorting
 //        val rankedPages: List[RankedWebPage] = (for page <- PageRank.equal(pages) yield new RankedWebPage(pages(page._1), page._2)).toList
         val rankedPages: List[RankedWebPage] = PageRank.equal(pages).map(page => RankedWebPage(pages(page._1), page._2)).toList
   // call PageRank.???? here
-  
+
         // Get user input then perform search until ":quit" is entered
         var query: String = ""
         var terms: List[String] = List()
