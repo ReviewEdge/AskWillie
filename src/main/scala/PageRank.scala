@@ -7,12 +7,10 @@ object PageRank {
      * @return      A map of page.id to a weight of 1.0 for those same WebPage objects
      */
     def equal(pages: Map[String, WebPage]): Map[String, Double] = {
+        // TODO: remove this stub and implement this method
         val keys = pages.keys.toList
         val ones = for i <- keys yield 1.0
-        print(keys)
-        print(ones)
         keys.zip(ones).toMap
-        // TODO: remove this stub and implement this method
     }
 
     /**
