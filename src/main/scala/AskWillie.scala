@@ -16,7 +16,9 @@ import scala.util.Sorting
         val pages: Map[String, WebPage] = mapWebPages(loadWebPages()) // completed for you
 
         // TODO: Measure the importance of each page using one of the functions in PageRank
-        val rankedPages: List[RankedWebPage] = (for page <- PageRank.equal(pages) yield new RankedWebPage(pages(page._1), page._2)).toList // call PageRank.???? here
+//        val rankedPages: List[RankedWebPage] = (for page <- PageRank.equal(pages) yield new RankedWebPage(pages(page._1), page._2)).toList
+        val rankedPages: List[RankedWebPage] = PageRank.equal(pages).map(page => RankedWebPage(pages(page._1), page._2)).toList
+  // call PageRank.???? here
 
         // Get user input then perform search until ":quit" is entered
         var query: String = ""
@@ -35,7 +37,10 @@ import scala.util.Sorting
           val pageArray = SearchedWebPageNormalize.normalize(searchedPages).toArray
           // sort this array based on the chosen averaging scheme i.e.
           //    (ArithmeticOrdering || GeometricOrdering || HarmonicOrdering)
-          Sorting.quickSort(pageArray)(NameOrdering) // TODO: change this from name ordering to something else!!!
+
+
+          // try all three orderings for the paper
+          Sorting.quickSort(pageArray)(GeometricOrdering) // TODO: change this from name ordering to something else!!!
           // Print the top ranked pages in descending order
           for p <- pageArray.reverse.slice(0, 10) do println(f"${p.name}%-15s  ${p.url}")
           // print a divider to make reading the results easier
