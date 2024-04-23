@@ -7,8 +7,8 @@ object PageRank {
      * @return      A map of page.id to a weight of 1.0 for those same WebPage objects
      */
     def equal(pages: Map[String, WebPage]): Map[String, Double] = {
-        // TODO: remove this stub and implement this method
-        pages.keys.map(_ -> 1.0).toMap
+      // TODO: remove this stub and implement this method
+      pages.keys.map(_ -> 1.0).toMap
     }
 
     /**
@@ -16,9 +16,9 @@ object PageRank {
      * @return A map of page.id to a weight that is a simple count of the number of pages linking to that page
      */
     def indegree(pages: Map[String, WebPage]): Map[String, Double] = {
-        // TODO: remove this stub and implement this method
-        val mytemp = pages.values.flatMap(_.links).groupBy(identity).view.mapValues(_.size.toDouble)
-        pages.keys.map((str) => str -> mytemp.getOrElse(str, 0.0)).toMap
+      // TODO: remove this stub and implement this method
+      val linkCounts = pages.values.flatMap(_.links).groupBy(identity).view.mapValues(_.size.toDouble).toMap
+      pages.keys.par.map(str => str -> linkCounts.getOrElse(str, 0.0)).seq.toMap
     }
 
     def pagerank(pages: Map[String, WebPage]): Map[String, Double] = {
