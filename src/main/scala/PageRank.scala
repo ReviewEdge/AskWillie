@@ -17,8 +17,7 @@ object PageRank {
      */
     def indegree(pages: Map[String, WebPage]): Map[String, Double] = {
       // TODO: remove this stub and implement this method
-      val linkCounts = pages.values.flatMap(_.links).groupBy(identity).view.mapValues(_.size.toDouble).toMap
-      pages.keys.par.map(str => str -> linkCounts.getOrElse(str, 0.0)).seq.toMap
+      pages.keys.par.map(str => str -> pages.values.count(page => page.links.contains(str)).toDouble).seq.toMap
     }
 
     def pagerank(pages: Map[String, WebPage]): Map[String, Double] = {
