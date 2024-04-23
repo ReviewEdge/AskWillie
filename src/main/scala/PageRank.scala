@@ -8,7 +8,7 @@ object PageRank {
      */
     def equal(pages: Map[String, WebPage]): Map[String, Double] = {
         // TODO: remove this stub and implement this method
-        pages.keys.toList.map(_ -> 1.0).toMap
+        pages.keys.map(_ -> 1.0).toMap
     }
 
     /**
@@ -16,10 +16,38 @@ object PageRank {
      * @return A map of page.id to a weight that is a simple count of the number of pages linking to that page
      */
     def indegree(pages: Map[String, WebPage]): Map[String, Double] = {
-        Map() // TODO: remove this stub and implement this method
+        // TODO: remove this stub and implement this method
+        val mytemp = pages.values.flatMap(_.links).groupBy(identity).view.mapValues(_.size.toDouble)
+        pages.keys.map((str) => str -> mytemp.getOrElse(str, 0.0)).toMap
     }
 
     def pagerank(pages: Map[String, WebPage]): Map[String, Double] = {
-        Map() // TODO: remove this stub and implement this method
+//        Map() // TODO: remove this stub and implement this method
+        val random = new scala.util.Random
+        val dampingFactor = 0.85
+        val walks = 10000
+        val steps = 100
+        val initialWeight = 1.0 / pages.size.toDouble
+
+        def randomWalk(startId: String, stepsLeft: Int): String = {
+            if (stepsLeft <= 0) startId
+            else {
+                val currentPage = pages(startId)
+                val nextId = if (random.nextDouble() < dampingFactor && currentPage.links.nonEmpty)
+                    currentPage.links(random.nextInt(currentPage.links.size))
+                else
+                    pages.keys.toSeq(random.nextInt(pages.size))
+                randomWalk(nextId, stepsLeft - 1)
+            }
+        }
+
+        val finalPageCounts = (1 to walks).map { _ =>
+            val startPageId = pages.keys.toSeq(random.nextInt(pages.size))
+            randomWalk(startPageId, steps)
+        }.groupBy(identity).view.mapValues(_.size).toMap
+
+        val totalWalks = finalPageCounts.values.sum
+//        println(finalPageCounts.view.mapValues(count => (count + 1).toDouble / (totalWalks + pages.size)).toMap)
+        finalPageCounts.view.mapValues(count => (count + 1).toDouble / (totalWalks + pages.size)).toMap
     }
 }
