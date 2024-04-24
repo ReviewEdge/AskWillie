@@ -33,23 +33,12 @@ object PageSearch {
      * @return      a list of the TF-IDF score for each page in the same order given
      */
     def tfidf(pages: List[RankedWebPage], query: List[String]): List[Double] = {
-
         // list of IDF for each term
         val iDFS: ParMap[String, Double] = query.par.map(term => term -> log(pages.length / (pages.par.count(_.text.contains(term))+1))).toMap
-
 
         def singleTermSinglePageTf(p: RankedWebPage, term: String): Double =
             tf(List(p), List(term)).head
 
-//        val test = iDFS(query.head)
-
-
-        val test2 = query.fold(0.0)((accumulator, currentTerm) => accumulator + (singleTermSinglePageTf(pages.head, currentTerm) * iDFS.getOrElse(currentTerm, 1.0)))
-
-
-
-//        pages.map(p => query.reduce((accumulator, currentTerm) => accumulator + (singleTermSinglePageTf(p, currentTerm) * iDFS(currentTerm))))
-
-        List()
+        pages.map(p => query.foldLeft(0.0)((accumulator: Double, currentTerm: String) => accumulator + (singleTermSinglePageTf(p, currentTerm) * iDFS.getOrElse(currentTerm, 1.0))))
     }
 }
