@@ -18,7 +18,7 @@ object PageSearch {
      * @return      a list of the term-frequency of the occurrences of those terms in each page in the same order given
      */
     def tf(pages: List[RankedWebPage], query: List[String]): List[Double] = {
-        pages.par.map(_.text.length).zip(count(pages, query)).map(_/_).toList
+        count(pages, query).zip(pages.par.map(_.text.length)).par.map(_/_).toList
     }
 
 
@@ -37,8 +37,9 @@ object PageSearch {
         val iDFS: ParMap[String, Double] = query.par.map(term => term -> log(pages.length / (pages.par.count(_.text.contains(term))+1))).toMap
 
         def singleTermSinglePageTf(p: RankedWebPage, term: String): Double =
-            tf(List(p), List(term)).head
+            p.text.sliding(term.length).count(window => window == term).toDouble / p.text.length
 
-        pages.map(p => query.foldLeft(0.0)((accumulator: Double, currentTerm: String) => accumulator + (singleTermSinglePageTf(p, currentTerm) * iDFS.getOrElse(currentTerm, 1.0))))
+        pages.par.map(p => query.foldLeft(0.0)((accumulator: Double, currentTerm: String) => accumulator + (singleTermSinglePageTf(p, currentTerm) * iDFS(currentTerm)))).toList
+
     }
 }
